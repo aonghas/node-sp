@@ -1,0 +1,17 @@
+{
+  "name": "sp-file-deploy",
+  "version": "1.0.8",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "fs": "^0.0.1-security",
+    "glob": "^7.2.0",
+    "node-sp-auth": "^3.0.4"
+  }
+}
