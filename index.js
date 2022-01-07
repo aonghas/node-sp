@@ -39,16 +39,21 @@ async function deploy(payload) {
   if (!payload.url || !payload.deployTo) {
     console.error("must provide url and deployTo");
   } else {
-    await authenticate(payload.url);
-    console.log("authenticated!");
-    console.log(`deploying to: ${payload.url}sitepages/${payload.deployTo}`);
-    await axios({
-      method: "post",
-      url:
-        payload.url +
-        `_api/web/GetFolderByServerRelativeUrl('sitepages/${payload.deployTo}')`,
-      headers: { ...headers, "If-Match": "*", "X-HTTP-Method": "DELETE" },
-    });
+    try {
+      await authenticate(payload.url);
+      console.log("authenticated!");
+      console.log(`deploying to: ${payload.url}sitepages/${payload.deployTo}`);
+      await axios({
+        method: "post",
+        url:
+          payload.url +
+          `_api/web/GetFolderByServerRelativeUrl('sitepages/${payload.deployTo}')`,
+        headers: { ...headers, "If-Match": "*", "X-HTTP-Method": "DELETE" },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
     getDirectories("dist", async (err, res) => {
       if (err) {
         // console.log("Error", err);
