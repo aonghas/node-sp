@@ -1,3 +1,7 @@
+// Author: Aonghas Anderson
+// Email: aonghas@gmail.com
+// Date: Jan 2022
+
 const spauth = require("node-sp-auth");
 const axios = require("axios");
 const glob = require("glob");
@@ -42,6 +46,7 @@ async function deploy(payload) {
     try {
       await authenticate(payload.url);
       console.log("authenticated!");
+      console.log("\n\n///// BEGINNING DEPLOYMENT /////\n\n");
       console.log(`deploying to: ${payload.url}sitepages/${payload.deployTo}`);
       await axios({
         method: "post",
@@ -114,8 +119,10 @@ async function deploy(payload) {
             })
             .catch((e) => {});
         }
-
-        console.log("Deployment complete!");
+        console.log(`\n\n///// DEPLOYMENT COMPLETE /////\n\n`);
+        console.log(
+          `View the site here: \n ${payload.url}sitepages/${payload.deployTo}/index.aspx`
+        );
       }
     });
   }
