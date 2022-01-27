@@ -46,8 +46,12 @@ async function deploy(payload) {
     try {
       await authenticate(payload.url);
       console.log("authenticated!");
-      console.log("\n\n///// BEGINNING DEPLOYMENT /////\n\n");
-      console.log(`deploying to: ${payload.url}sitepages/${payload.deployTo}`);
+      console.log(
+        "%c\n\n🕑 BEGINNING DEPLOYMENT\n\n",
+        "background: #222; color: #00da00"
+      );
+      console.log(`Deploying to: ${payload.url}sitepages/${payload.deployTo}`);
+      console.log("\n⏳ Please wait...");
       await axios({
         method: "post",
         url:
@@ -119,9 +123,9 @@ async function deploy(payload) {
             })
             .catch((e) => {});
         }
-        console.log(`\n\n///// DEPLOYMENT COMPLETE /////\n\n`);
+        console.log(`\n\n✅ DEPLOYMENT COMPLETE! 🙌\n\n`);
         console.log(
-          `View the site here: \n ${payload.url}sitepages/${payload.deployTo}/index.aspx`
+          `View the site here: \n${payload.url}sitepages/${payload.deployTo}/index.aspx\n\n`
         );
       }
     });
