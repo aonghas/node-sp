@@ -6,6 +6,8 @@ const spauth = require("node-sp-auth");
 const axios = require("axios");
 const glob = require("glob");
 const fs = require("fs");
+const { exit } = require("process");
+const prompt = require("prompt-sync")();
 
 let headers = null;
 let token = null;
@@ -52,6 +54,36 @@ async function deploy(payload) {
       );
       console.log(`Deploying to: ${payload.url}sitepages/${payload.deployTo}`);
       console.log("\n⏳ Please wait...");
+    } catch (error) {
+      console.log(error.message);
+      exit(1);
+    }
+
+    if (
+      await axios({
+        method: "post",
+        url:
+          payload.url +
+          `_api/web/GetFolderByServerRelativeUrl('sitepages/${payload.deployTo}')/Exists`,
+        headers: { ...headers },
+      }).then((resp) => {
+        return resp.data.value;
+      })
+    ) {
+      console.log(
+        `\n⚠️ WARNING: The folder ${payload.url}sitepages/${payload.deployTo} already exists`
+      );
+      const input = prompt(
+        "Everything in this folder will be deleted. Confirm (y/N): "
+      );
+
+      if (input !== "y") {
+        console.log("Deployment cancelled.");
+        exit(0);
+      }
+    }
+
+    try {
       await axios({
         method: "post",
         url:
@@ -60,7 +92,8 @@ async function deploy(payload) {
         headers: { ...headers, "If-Match": "*", "X-HTTP-Method": "DELETE" },
       });
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
+      exit(1);
     }
 
     getDirectories("dist", async (err, res) => {
@@ -70,11 +103,13 @@ async function deploy(payload) {
         const files = res;
 
         for (const file of files) {
-          const folders = file
-            .split("/")
-            .slice(0, -1)
-            .map((folder) => (folder == "dist" ? payload.deployTo : folder));
-          const folderPath = folders.join("/");
+          const folders = [
+            ...payload.deployTo.split("/").filter((f) => f.length > 0),
+            ...file
+              .split("/")
+              .slice(0, -1)
+              .filter((folder) => folder !== "dist"),
+          ];
 
           const promises = [];
 
