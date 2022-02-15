@@ -59,27 +59,29 @@ async function deploy(payload) {
       exit(1);
     }
 
-    if (
-      await axios({
-        method: "post",
-        url:
-          payload.url +
-          `_api/web/GetFolderByServerRelativeUrl('sitepages/${payload.deployTo}')/Exists`,
-        headers: { ...headers },
-      }).then((resp) => {
-        return resp.data.value;
-      })
-    ) {
-      console.log(
-        `\n⚠️ WARNING: The folder ${payload.url}sitepages/${payload.deployTo} already exists`
-      );
-      const input = prompt(
-        "Everything in this folder will be deleted. Confirm (y/N): "
-      );
+    if (!payload.overwrite) {
+      if (
+        await axios({
+          method: "post",
+          url:
+            payload.url +
+            `_api/web/GetFolderByServerRelativeUrl('sitepages/${payload.deployTo}')/Exists`,
+          headers: { ...headers },
+        }).then((resp) => {
+          return resp.data.value;
+        })
+      ) {
+        console.log(
+          `\n⚠️ WARNING: The folder ${payload.url}sitepages/${payload.deployTo} already exists`
+        );
+        const input = prompt(
+          "Everything in this folder will be deleted. Confirm (y/N): "
+        );
 
-      if (input.toLowerCase() !== "y") {
-        console.log("Deployment cancelled.");
-        exit(0);
+        if (input.toLowerCase() !== "y") {
+          console.log("Deployment cancelled.");
+          exit(0);
+        }
       }
     }
 
