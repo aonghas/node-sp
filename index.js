@@ -77,7 +77,7 @@ async function deploy(payload) {
         "Everything in this folder will be deleted. Confirm (y/N): "
       );
 
-      if (input !== "y") {
+      if (input.toLowerCase() !== "y") {
         console.log("Deployment cancelled.");
         exit(0);
       }
