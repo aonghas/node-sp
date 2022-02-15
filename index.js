@@ -59,7 +59,10 @@ async function deploy(payload) {
       exit(1);
     }
 
-    if (!payload.options.some((o) => o == "-f" || o == "-force")) {
+    if (
+      !payload.options ||
+      !payload.options.some((o) => o == "-f" || o == "-force")
+    ) {
       if (
         await axios({
           method: "post",
