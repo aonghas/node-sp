@@ -61,7 +61,7 @@ async function deploy(payload) {
 
     if (
       !payload.options ||
-      !payload.options.some((o) => o == "-f" || o == "-force")
+      !payload.options.some((o) => ["-f", "-force"].includes(o))
     ) {
       if (
         await axios({
